@@ -9,8 +9,6 @@ $conn = pg_connect("
 
 if (!$conn) {
     die("Error de conexión ❌");
-} else {
-    echo "Conectado a Supabase 🚀";
 }
 
 ?>
