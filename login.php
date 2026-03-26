@@ -6,20 +6,22 @@ $mensaje = "";
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
-    $user = $_POST['usuario'];
+    $user = pg_escape_string($conn, $_POST['usuario']);
     $pass = md5($_POST['password']);
 
     $sql = "SELECT * FROM usuarios WHERE usuario='$user' AND password='$pass'";
-    $res = $conexion->query($sql);
+    $res = pg_query($conn, $sql);
 
-    if($res->num_rows > 0){
-        $fila = $res->fetch_assoc();
+    if($res && pg_num_rows($res) > 0){
+
+        $fila = pg_fetch_assoc($res);
         $codigo = rand(100000,999999);
 
         $_SESSION['temp_user'] = $user;
         $_SESSION['codigo'] = $codigo;
 
-        $_SESSION['usuario'] = $usuario;
+        // ✅ CORREGIDO
+        $_SESSION['usuario'] = $user;
         $_SESSION['rol'] = $fila['rol'];
 
         $mensaje = "Tu código MFA es: <b>$codigo</b>";
