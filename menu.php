@@ -244,9 +244,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['contacto'])) {
             <input type="text" id="buscador" placeholder="🔍 Buscar producto..." onkeyup="buscarProducto()">
         </div>
         <br>
+    
         <?php 
-        if ($resultado && $resultado->num_rows > 0):
+        if ($resultado && pg_num_rows($resultado) > 0):
         ?>
+    
         <table>
             <thead>
                 <tr>
@@ -258,38 +260,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['contacto'])) {
                     <?php if($modo_admin): ?><th>Acciones</th><?php endif; ?>
                 </tr>
             </thead>
+    
             <tbody>
-                <?php while($fila = $resultado->fetch_assoc()): ?>
+                <?php while($fila = pg_fetch_assoc($resultado)): ?>
                     <tr class="producto">
-                        <td><?php echo $fila['IdMenu']; ?></td>
-                        <td class="nombre"><?php echo htmlspecialchars($fila['Nombre']); ?></td>
-                        <td><?php echo htmlspecialchars($fila['Descripcion']); ?></td>
-                        <td class="price">$<?php echo number_format($fila['Precio'], 2); ?></td>
-                        <?php if(!$modo_admin): ?><td>
+                        <td><?php echo $fila['idmenu']; ?></td>
+                        <td class="nombre"><?php echo htmlspecialchars($fila['nombre']); ?></td>
+                        <td><?php echo htmlspecialchars($fila['descripcion']); ?></td>
+                        <td class="price">$<?php echo number_format($fila['precio'], 2); ?></td>
+    
+                        <?php if(!$modo_admin): ?>
+                        <td>
                             <button class="btn-carrito"
-                                onclick="agregarCarrito('<?php echo htmlspecialchars($fila['Nombre']); ?>', <?php echo $fila['Precio']; ?>)">
+                                onclick="agregarCarrito('<?php echo htmlspecialchars($fila['nombre']); ?>', <?php echo $fila['precio']; ?>)">
                                 🛒 Agregar
                             </button>
-                        </td><?php endif; ?>
-                        <?php if($modo_admin): ?><td>
-                            <a href="menu.php?accion=editar&id=<?php echo $fila['IdMenu']; ?>" class="btn-accion btn-editar">Editar</a>
-                            <a href="menu.php?eliminar=<?php echo $fila['IdMenu']; ?>" class="btn-accion btn-eliminar" onclick="return confirm('¿Está seguro que desea eliminar este producto?');">Eliminar</a>
-                        </td><?php endif; ?>
+                        </td>
+                        <?php endif; ?>
+    
+                        <?php if($modo_admin): ?>
+                        <td>
+                            <a href="menu.php?accion=editar&id=<?php echo $fila['idmenu']; ?>" class="btn-accion btn-editar">Editar</a>
+                            <a href="menu.php?eliminar=<?php echo $fila['idmenu']; ?>" class="btn-accion btn-eliminar" onclick="return confirm('¿Está seguro que desea eliminar este producto?');">Eliminar</a>
+                        </td>
+                        <?php endif; ?>
+    
                     </tr>
                 <?php endwhile; ?>
             </tbody>
         </table>
-        <?php 
-        else:
-        ?>
-        <div class="vacio">
-            <p>No hay productos registrados. <a href="menu.php?accion=agregar">Agregar uno ahora</a></p>
-        </div>
-        <?php 
-        endif;
-        ?>
+    
+        <?php else: ?>
+            <div class="vacio">
+                <p>No hay productos registrados. <a href="menu.php?accion=agregar">Agregar uno ahora</a></p>
+            </div>
+        <?php endif; ?>
+    
     </div>
-
 <script>
 
 
