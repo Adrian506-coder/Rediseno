@@ -1,12 +1,12 @@
 <?php
 include("conexion.php");
 
-$sql = "SELECT * FROM menu WHERE destacado = 1 ORDER BY idMenu DESC";
-$resultado = $conexion->query($sql);
+$sql = "SELECT * FROM menu WHERE destacado = TRUE ORDER BY IdMenu DESC";
+$resultado = pg_query($conn, $sql);
 
 $productos = [];
 
-while($fila = $resultado->fetch_assoc()){
+while($fila = pg_fetch_assoc($resultado)){
     $productos[] = $fila;
 }
 
