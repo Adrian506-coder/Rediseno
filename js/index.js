@@ -10,14 +10,14 @@ function cargarProductos(){
 
             contenedor.innerHTML += `
                 <div class="card">
-                    <img src="img/platillos/${producto.imagen}" alt="${producto.Nombre}">
-                    <h3>${producto.Nombre}</h3>
-                    <p>${producto.Descripcion}</p>
-                    <div class="price">$${producto.Precio}</div>
+                    <img src="img/platillos/${producto.imagen}" alt="${producto.nombre}">
+                    <h3>${producto.nombre}</h3>
+                    <p>${producto.descripcion}</p>
+                    <div class="price">$${producto.precio}</div>
                     <br>
                     <div class="card-buttons">
                         <a href="menu.php" class="btn green">Ver Menú</a>
-                        <button class="btn orange" onclick="agregarCarrito('${producto.Nombre}', ${producto.Precio})">
+                        <button class="btn orange" onclick="agregarCarrito('${producto.nombre}', ${producto.precio})">
                             🛒 Agregar al carrito
                         </button>
                     </div>
