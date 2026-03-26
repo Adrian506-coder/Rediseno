@@ -5,105 +5,124 @@ include("bd/conexion.php");
 // Determinar si es admin
 $modo_admin = isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin';
 
-    // Manejo de acciones CRUD
-    $accion = isset($_GET['accion']) ? $_GET['accion'] : '';
-    $mensaje = '';
+// Manejo de acciones CRUD
+$accion = isset($_GET['accion']) ? $_GET['accion'] : '';
+$mensaje = '';
 
-    if($modo_admin == true) {
+// ======================
+// CRUD SOLO ADMIN
+// ======================
+if($modo_admin) {
 
-        // CREAR PRODUCTO
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear'])) {
-            $nombre = $conexion->real_escape_string($_POST['nombre']);
-            $descripcion = $conexion->real_escape_string($_POST['descripcion']);
-            $precio = $conexion->real_escape_string($_POST['precio']);
-            
-            if (!empty($nombre) && !empty($descripcion) && !empty($precio)) {
-                $sql = "INSERT INTO Menu (Nombre, Descripcion, Precio) VALUES ('$nombre', '$descripcion', '$precio')";
-                if ($conexion->query($sql)) {
-                    $mensaje = "<div class='alerta alerta-exito'>Producto agregado correctamente</div>";
-                } else {
-                    $mensaje = "<div class='alerta alerta-error'>Error al agregar el producto</div>";
-                }
+    // CREAR PRODUCTO
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['crear'])) {
+
+        $nombre = pg_escape_string($conn, $_POST['nombre']);
+        $descripcion = pg_escape_string($conn, $_POST['descripcion']);
+        $precio = pg_escape_string($conn, $_POST['precio']);
+
+        if (!empty($nombre) && !empty($descripcion) && !empty($precio)) {
+
+            $sql = "INSERT INTO menu (nombre, descripcion, precio) 
+                    VALUES ('$nombre', '$descripcion', '$precio')";
+
+            if (pg_query($conn, $sql)) {
+                $mensaje = "<div class='alerta alerta-exito'>Producto agregado correctamente</div>";
             } else {
-                $mensaje = "<div class='alerta alerta-error'>Todos los campos son obligatorios</div>";
+                $mensaje = "<div class='alerta alerta-error'>Error al agregar el producto</div>";
             }
-        }
 
-        // ACTUALIZAR PRODUCTO
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['actualizar'])) {
-            $id = intval($_POST['id']);
-            $nombre = $conexion->real_escape_string($_POST['nombre']);
-            $descripcion = $conexion->real_escape_string($_POST['descripcion']);
-            $precio = $conexion->real_escape_string($_POST['precio']);
-            
-            if (!empty($nombre) && !empty($descripcion) && !empty($precio)) {
-                $sql = "UPDATE Menu SET Nombre='$nombre', Descripcion='$descripcion', Precio='$precio' WHERE IdMenu=$id";
-                if ($conexion->query($sql)) {
-                    $mensaje = "<div class='alerta alerta-exito'>Producto actualizado correctamente</div>";
-                    $accion = '';
-                } else {
-                    $mensaje = "<div class='alerta alerta-error'>Error al actualizar el producto</div>";
-                }
-            } else {
-                $mensaje = "<div class='alerta alerta-error'>Todos los campos son obligatorios</div>";
-            }
-        }
-
-        // ELIMINAR PRODUCTO
-        if (isset($_GET['eliminar'])) {
-            $id = intval($_GET['eliminar']);
-            $sql = "DELETE FROM Menu WHERE IdMenu=$id";
-            if ($conexion->query($sql)) {
-                $mensaje = "<div class='alerta alerta-exito'>Producto eliminado correctamente</div>";
-            } else {
-                $mensaje = "<div class='alerta alerta-error'>Error al eliminar el producto</div>";
-            }
-        }
-
-        // OBTENER PRODUCTO PARA EDITAR
-        $producto_editar = null;
-        if ($accion == 'editar' && isset($_GET['id'])) {
-            $id = intval($_GET['id']);
-            $sql = "SELECT * FROM Menu WHERE IdMenu=$id";
-            $resultado_editar = $conexion->query($sql);
-            $producto_editar = $resultado_editar->fetch_assoc();
+        } else {
+            $mensaje = "<div class='alerta alerta-error'>Todos los campos son obligatorios</div>";
         }
     }
 
-    // OBTENER TODOS LOS PRODUCTOS
-    $sql = "SELECT * FROM Menu";
-    $resultado = $conexion->query($sql);
+    // ACTUALIZAR PRODUCTO
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['actualizar'])) {
 
-    if(isset($_POST['contacto'])){
+        $id = intval($_POST['id']);
+        $nombre = pg_escape_string($conn, $_POST['nombre']);
+        $descripcion = pg_escape_string($conn, $_POST['descripcion']);
+        $precio = pg_escape_string($conn, $_POST['precio']);
 
-        $nombre = $_POST['nombre_contacto'];
-        $correo = $_POST['correo_contacto'];
-        $mensaje = $_POST['mensaje_contacto'];
+        if (!empty($nombre) && !empty($descripcion) && !empty($precio)) {
+
+            $sql = "UPDATE menu 
+                    SET nombre='$nombre', descripcion='$descripcion', precio='$precio' 
+                    WHERE idmenu=$id";
+
+            if (pg_query($conn, $sql)) {
+                $mensaje = "<div class='alerta alerta-exito'>Producto actualizado correctamente</div>";
+                $accion = '';
+            } else {
+                $mensaje = "<div class='alerta alerta-error'>Error al actualizar el producto</div>";
+            }
+
+        } else {
+            $mensaje = "<div class='alerta alerta-error'>Todos los campos son obligatorios</div>";
+        }
+    }
+
+    // ELIMINAR PRODUCTO
+    if (isset($_GET['eliminar'])) {
+
+        $id = intval($_GET['eliminar']);
+        $sql = "DELETE FROM menu WHERE idmenu=$id";
+
+        if (pg_query($conn, $sql)) {
+            $mensaje = "<div class='alerta alerta-exito'>Producto eliminado correctamente</div>";
+        } else {
+            $mensaje = "<div class='alerta alerta-error'>Error al eliminar el producto</div>";
+        }
+    }
+
+    // OBTENER PRODUCTO PARA EDITAR
+    $producto_editar = null;
+
+    if ($accion == 'editar' && isset($_GET['id'])) {
+
+        $id = intval($_GET['id']);
+        $sql = "SELECT * FROM menu WHERE idmenu=$id";
+        $resultado_editar = pg_query($conn, $sql);
+
+        if ($resultado_editar) {
+            $producto_editar = pg_fetch_assoc($resultado_editar);
+        }
+    }
+}
+
+// ======================
+// OBTENER PRODUCTOS
+// ======================
+$sql = "SELECT * FROM menu ORDER BY idmenu DESC";
+$resultado = pg_query($conn, $sql);
+
+// ======================
+// CONTACTO
+// ======================
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['contacto'])) {
+
+    $nombre = pg_escape_string($conn, $_POST['nombre_contacto']);
+    $correo = pg_escape_string($conn, $_POST['correo_contacto']);
+    $mensaje_contacto = pg_escape_string($conn, $_POST['mensaje_contacto']);
+
+    if (!empty($nombre) && !empty($correo) && !empty($mensaje_contacto)) {
 
         $sql = "INSERT INTO mensajes (nombre, correo, mensaje)
-                VALUES ('$nombre','$correo','$mensaje')";
+                VALUES ('$nombre','$correo','$mensaje_contacto')";
 
-        if(mysqli_query($conexion, $sql)){
+        if (pg_query($conn, $sql)) {
             header("Location: index.php?mensaje=ok");
             exit();
         } else {
             header("Location: index.php?mensaje=error");
             exit();
         }
-    }
 
-    // MANEJO FORMULARIO CONTACTO (footer)
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['contacto'])) {
-        $nombre_contacto = $conexion->real_escape_string($_POST['nombre_contacto']);
-        $correo_contacto = $conexion->real_escape_string($_POST['correo_contacto']);
-        $mensaje_contacto = $conexion->real_escape_string($_POST['mensaje_contacto']);
-        if (!empty($nombre_contacto) && !empty($correo_contacto) && !empty($mensaje_contacto)) {
-            $mensaje = "<div class='alerta alerta-exito'>Mensaje de contacto enviado. Gracias.</div>";
-        } else {
-            $mensaje = "<div class='alerta alerta-error'>Por favor complete Nombre, Correo y Mensaje.</div>";
-        }
+    } else {
+        $mensaje = "<div class='alerta alerta-error'>Por favor complete todos los campos</div>";
     }
-
+}
 ?>
 
 
