@@ -1,3 +1,4 @@
+
 *{
     margin:0;
     padding:0;
@@ -687,4 +688,5 @@ body.texto-grande .modo-btn:not(.no-escalar) {
 
 .toast.show {
     opacity: 1;
+
 }

@@ -1,3 +1,4 @@
+
 <?php
 $conn = pg_connect("
     host=aws-0-us-west-2.pooler.supabase.com
@@ -12,3 +13,4 @@ if (!$conn) {
 }
 
 ?>
+

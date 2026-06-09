@@ -1,3 +1,4 @@
+
 // -----------------------------
 // Carrito de compras simulado
 // -----------------------------
@@ -135,4 +136,5 @@ function comprarProductos() {
 function cerrarModal() {
     document.getElementById("modalCompra").style.display = "none";
 }
+
 
