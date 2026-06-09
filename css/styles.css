@@ -687,6 +687,6 @@ body.texto-grande .modo-btn:not(.no-escalar) {
 }
 
 .toast.show {
-    opacity: 1;
+    opacity: 2;
 
 }
