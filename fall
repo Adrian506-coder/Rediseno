@@ -682,4 +682,5 @@ body.texto-grande .modo-btn {
 
 .toast.show {
     opacity: 1;
+
 }

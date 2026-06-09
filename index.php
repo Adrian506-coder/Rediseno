@@ -221,4 +221,5 @@ textBtn.addEventListener("click", () => {
 <script src="js/idioma.js"></script>
 <script src="js/carrito.js"></script>
 </body>
+
 </html>

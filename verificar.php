@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 
@@ -31,4 +32,5 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 <form method="POST">
     <input type="text" name="codigo" placeholder="Código" required>
     <button type="submit">Verificar</button>
+
 </form>

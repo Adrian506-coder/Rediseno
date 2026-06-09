@@ -1,3 +1,4 @@
+
 <?php
 include("conexion.php");
 
@@ -13,3 +14,4 @@ while($fila = pg_fetch_assoc($resultado)){
 header('Content-Type: application/json');
 echo json_encode($productos);
 ?>
+
